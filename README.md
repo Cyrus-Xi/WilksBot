@@ -1,5 +1,4 @@
-WilksBot
-========
+#WilksBot
 
 A simple Reddit bot that uses PRAW, a popular wrapper for Reddit's API, and regular expressions to appropriately and flexibly parse relevant post- and comment-embedded weightlifting statistics to reply with the Wilks coefficient adjusted statistic. 
 
@@ -25,8 +24,9 @@ Sources I used during the course of this include but are not limited to the foll
 * https://github.com/zd9/IMDb-Reddit-Bot/blob/master/bot.py
 
 
-#TODO
-========
+###TODO
 
-Have bot delete its comments when they go below a certain karma score. Calculate Wilks not just for a total but for
-a single lift, too. And refactor code for less redundancy.
+* [ ] Have bot delete its comments when they go below a certain karma score
+* [ ] Calculate Wilks not just for a total but for a single lift, too
+* [ ] And refactor code for less redundancy.
+* [ ] Parse lift numbers given in kilograms too
