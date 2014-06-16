@@ -17,10 +17,11 @@ import os  # For environment variables
 #
 # Fixing regex to handle more cases, e.g., bw of 140 and just
 # a total, no individual lifts.
-
+#
 # Sources:
 # https://praw.readthedocs.org/en/v2.1.16/pages/writing_a_bot.html
 # http://www.nonbird.com/rbb_article/redditbottutorial.html
+# http://amertune.blogspot.com/2014/04/tutorial-create-reddit-bot-with-python.html
 
 submission_already_done = []  # List of submission IDs already checked
 comment_already_done = []  # Comment IDs already checked
@@ -70,13 +71,13 @@ comment_end_string = comment_end_string.replace(' ', ' ^^')
 # Add github link to user_agent description later.
 user_agent = ("Wilks_bot, a Wilks score calculator, 1.6 by /u/Tyrion314")
 r = praw.Reddit(user_agent=user_agent)  # Represents session with reddit
-#USERNAME = login_lines[0].strip()
-#PASSWORD = login_lines[1].strip()
+USERNAME = os.environ['REDDIT_USER']
+PASSWORD = os.environ['REDDIT_PASS']
 
 trying = True
 while trying:
     try:
-        r.login(os.environ['REDDIT_USER'], os.environ['REDDIT_PASS'])
+        r.login(USERNAME, PASSWORD)
         print "Success! Logged in"
         trying = False
     except praw.errors.InvalidUserPass:
@@ -86,7 +87,6 @@ while trying:
     except Exception as e:
         print "ERROR: {}".format(e)
         time.sleep(10)
-
 
 
 # Handles either an explicit total or individual lifts.
@@ -214,22 +214,20 @@ def reply_to_comments(submission):
 
 def main():
     while True:
-        multi_reddits = r.get_subreddit('bottest')
+        multi_reddits = r.get_subreddit('bottest+powerlifting+weightroom')
         try:
-            for submission in multi_reddits.get_new(limit=4):
+            for submission in multi_reddits.get_hot(limit=10):
                 print "Doing submission stuff."
                 reply_to_submission(submission)
                 print "Doing comment stuff."
                 reply_to_comments(submission)
-            time.sleep(10)
+            time.sleep(7200)
         except KeyboardInterrupt:
             break
         except praw.errors.APIException as e:
             print "ERROR: ", e
             print "Sleeping 1 minute"
             time.sleep(60)
-        except HTTPError as e:
-            print "ERROR: Probably banned from /r/{}".format(str(multi_reddits))
         # Shouldn't happen since PRAW controls the rate automatically, but just in case
         except praw.errors.RateLimitExceeded as e:
             print "ERROR: Rate Limit Exceeded: {}".format(e)
