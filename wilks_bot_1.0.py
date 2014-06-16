@@ -6,18 +6,6 @@ import re
 import time
 import os  # For environment variables
 
-
-
-# Most recent.
-# Split main up into 2 functions (from version3). May make
-# even more modular. Now have to flesh out the documentation,
-# reply text (give more information about the bot, etc.),
-# and make sure lines aren't too long. Make prettier basically.
-# Also, do a little more testing.
-#
-# Fixing regex to handle more cases, e.g., bw of 140 and just
-# a total, no individual lifts.
-#
 # Sources:
 # https://praw.readthedocs.org/en/v2.1.16/pages/writing_a_bot.html
 # http://www.nonbird.com/rbb_article/redditbottutorial.html
@@ -56,7 +44,7 @@ BW_pattern = re.compile(r"""
 
 comment_string = """
 \n\n\n------------------------\n\n
-^^[Questions/Comments/Suggestions? Message me!](http://www.reddit.com/message/compose/?to=Wilks_bot)
+^^[Questions/Comments/Suggestions?^^Message me!](http://www.reddit.com/message/compose/?to=Wilks_bot)
 ^^Version^^1.0^^[(Source)](https://github.com/Suryc11/WilksBot)\n
  """
 
