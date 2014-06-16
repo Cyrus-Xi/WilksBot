@@ -7,12 +7,6 @@ import time
 import os  # For environment variables
 import requests  # For HTTP error-handling
 
-# Sources:
-# https://praw.readthedocs.org/en/v2.1.16/pages/writing_a_bot.html
-# http://www.nonbird.com/rbb_article/redditbottutorial.html
-# http://amertune.blogspot.com/2014/04/tutorial-create-reddit-bot-with-python.html
-# https://github.com/zd9/IMDb-Reddit-Bot/blob/master/bot.py
-
 submission_already_done = []  # List of submission IDs already checked
 comment_already_done = []  # Comment IDs already checked
 
