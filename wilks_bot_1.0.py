@@ -62,8 +62,7 @@ comment_end_string = comment_string + extra_string
 with open('wilks_login.txt', 'r') as infile:
     login_lines = infile.readlines()
 
-# Add github link to user_agent description later.
-user_agent = ("Wilks_bot, a Wilks score calculator, 1.6 by /u/Tyrion314")
+user_agent = ("Wilks_bot, a Wilks score calculator, 1.6 by /u/Tyrion314.")
 r = praw.Reddit(user_agent=user_agent)  # Represents session with reddit
 USERNAME = login_lines[0].strip()
 PASSWORD = login_lines[1].strip()
