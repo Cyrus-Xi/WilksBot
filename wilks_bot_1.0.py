@@ -54,15 +54,18 @@ BW_pattern = re.compile(r"""
     |(?<=bodyweight\sof\s)\d{2,3}      # E.g.: ... bodyweight of 140
                         """, re.X | re.I)  # Verbose and case-insensitive
 
-comment_end_string = """
+comment_string = """
 \n\n\n------------------------\n\n
- [Questions/Comments/Suggestions? Message me!](http://www.reddit.com/message/compose/?to=Wilks_bot)
- Version 1.0 [(Source)](https://github.com)\n
- Formats: 'total 1200 @ 160', '400/300/500 at 200', 'total[ed] 1500 @ [a] BW [of] 200', '300/200/400 bw[:] 140'.
+^^[Questions/Comments/Suggestions? Message me!](http://www.reddit.com/message/compose/?to=Wilks_bot)
+^^Version^^1.0^^[(Source)](https://github.com/Suryc11/WilksBot)\n
+ """
+
+extra_string = """
+Formats: 'total 1200 @ 160', '400/300/500 at 200', 'total[ed] 1500 @ [a] BW [of] 200', '300/200/400 bw[:] 140'.
 """
 
 # Make text "subscripted" using Reddit's formatting.
-comment_end_string = comment_end_string.replace(' ', ' ^^')
+comment_end_string = comment_string + extra_string.replace(' ', ' ^^')
 
 ### Login
 #with open('wilks_login.txt', 'r') as infile:
