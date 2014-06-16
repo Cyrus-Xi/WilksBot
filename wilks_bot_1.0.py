@@ -5,11 +5,13 @@ import praw  # Reddit API wrapper
 import re
 import time
 import os  # For environment variables
+import requests  # For HTTP error-handling
 
 # Sources:
 # https://praw.readthedocs.org/en/v2.1.16/pages/writing_a_bot.html
 # http://www.nonbird.com/rbb_article/redditbottutorial.html
 # http://amertune.blogspot.com/2014/04/tutorial-create-reddit-bot-with-python.html
+# https://github.com/zd9/IMDb-Reddit-Bot/blob/master/bot.py
 
 submission_already_done = []  # List of submission IDs already checked
 comment_already_done = []  # Comment IDs already checked
@@ -44,16 +46,17 @@ BW_pattern = re.compile(r"""
 
 comment_string = """
 \n\n\n------------------------\n\n
-^^[Questions/Comments/Suggestions?^^Message me!](http://www.reddit.com/message/compose/?to=Wilks_bot)
-^^Version^^1.0^^[(Source)](https://github.com/Suryc11/WilksBot)\n
- """
+^^[Questions/Comments/Suggestions/Likes/Dislikes?](http://www.reddit.com/message/compose/?to=Wilks_bot)
+^^Version ^^1.0 ^^[(Source)](https://github.com/Suryc11/WilksBot)\n
+"""
 
 extra_string = """
-Formats: 'total 1200 @ 160', '400/300/500 at 200', 'total[ed] 1500 @ [a] BW [of] 200', '300/200/400 bw[:] 140'.
+ Formats: 'total 1200 @ 160', '400/300/500 at 200', 'total[ed] 1500 @ [a] BW [of] 200', '300/200/400 bw[:] 140'.
 """
 
 # Make text "subscripted" using Reddit's formatting.
-comment_end_string = comment_string + extra_string.replace(' ', ' ^^')
+extra_string = extra_string.replace(' ', ' ^^')
+comment_end_string = comment_string + extra_string
 
 ### Login
 with open('wilks_login.txt', 'r') as infile:
@@ -113,13 +116,9 @@ def reply_to_submission(submission):
     if submission.id not in submission_already_done and submission:
         #print submission.id, submission.title
         # Get list of all authors of top-level/root comments.
-        #real_comments = [comment for comment in submission.comments if comment.author is not None]
-        #print real_comments
-        root_comment_authors = [(comment.author.name).encode('utf-8') for comment in submission.comments if
+        root_comment_authors = [str(comment.author.name) for comment in submission.comments if
                                 comment.author is not None and comment.is_root]
         print root_comment_authors
-        #for author in root_comment_authors:
-            #print author
         # True if this bot has made a top-level comment.
         already_replied_submission = any(USERNAME == author for author in root_comment_authors)
         #print already_replied_submission
@@ -133,14 +132,15 @@ def reply_to_submission(submission):
             has_wilks = any(word in op_text for word in wilk_words)
             if submission.id not in submission_already_done and not has_wilks:
                 wilks_match = wilks_pattern.search(op_text)
-                if wilks_match:  # Will be true if found pattern
+                if wilks_match:    # True if found pattern
                     BW_match = BW_pattern.search(op_text)
                     if BW_match:
                         # Take out whitespace and concatenate data.
-                        raw_data = (wilks_match.group().strip()
-                                    + ' ' + BW_match.group().strip())
+                        wilks_data = wilks_match.group().strip()
+                        raw_data = (wilks_data + ' ' + BW_match.group().strip())
                         wilks = calculate_wilks(raw_data)
-                        if len(wilks_match.group().strip()) < 5:  # Just total given
+                        # Just total given, affects subject/verb agreement.
+                        if len(wilks_data) < 5:
                             submission.add_comment("""Your total of {} at a BW of {}
                                 gives you a Wilks score of {}. Congrats!
                                 {}""".format(
@@ -157,22 +157,22 @@ def reply_to_submission(submission):
 def reply_to_comments(submission):
     # Now look at submission's comments.
     # Flatten comment forest because don't care about comment's place.
-
     flat_comments = praw.helpers.flatten_tree(submission.comments)
-    # Use Pythonic filtering list comprehension to get only existent and
-    # non-bot-authored comments.
+    # Use Pythonic filtering list comprehension to get only existent, non-bot-authored,
+    # and unique comments.
     valid_comments = [comment for comment in flat_comments if comment.author is not None]
-    valid_comments = [comment for comment in valid_comments if str(comment.author).encode('utf-8') != USERNAME]
-    valid_comments = [comment for comment in valid_comments if comment.id not in comment_already_done]
+    valid_comments = [comment for comment in valid_comments if str(comment.author.name) != USERNAME
+                      and comment.id not in comment_already_done]
+    #valid_comments = [comment for comment in valid_comments if comment.id not in comment_already_done]
 
+    print valid_comments
     #for valid_comment in valid_comments:
         #print "Valid comment: {} by {}".format(valid_comment.body, valid_comment.author)
-    # For each comment, see if matches.
     for comment in valid_comments:
+        #print comment.author, comment.author.name, str(comment.author), str(comment.author.name)
         # Must check that the bot hasn't already replied.
-        replies_authors = [str(comment.author.name).encode('utf-8') for comment in comment.replies]
+        replies_authors = [str(comment.author.name) for comment in comment.replies]
         #print replies_authors
-
         already_replied_comment = any(USERNAME == author for author in replies_authors)
         #print already_replied_comment
         if not already_replied_comment:
@@ -181,7 +181,7 @@ def reply_to_comments(submission):
             has_wilks = any(word in comment_text for word in wilk_words)
             #print has_wilks
             #print comment.score
-            # Make sure comment is not a troll and worth replying to.
+            # Make sure comment is worth replying to.
             if comment.score > 0 and not has_wilks:
                 wilks_match = wilks_pattern.search(comment_text)
                 #print wilks_match
@@ -189,10 +189,12 @@ def reply_to_comments(submission):
                     BW_match = BW_pattern.search(comment_text)
                     #print BW_match
                     if BW_match:
-                        raw_data = (wilks_match.group().strip()
-                                    + ' ' + BW_match.group().strip())
+                        wilks_data = wilks_match.group().strip()
+                        raw_data = (wilks_data + ' ' + BW_match.group().strip())
+                        #print raw_data
                         wilks = calculate_wilks(raw_data)
-                        if len(wilks_match.group().strip()) < 5:  # Just total given
+                        # Just total given, affects subject/verb agreement.
+                        if len(wilks_data) < 5:
                             comment.reply("""Your total of {} at a BW of {}
                                 gives you a Wilks score of {}. Congrats! {}""".format(
                                 wilks_match.group(), BW_match.group(), wilks, comment_end_string))
@@ -202,7 +204,7 @@ def reply_to_comments(submission):
                                 wilks_match.group(), BW_match.group(), wilks, comment_end_string))
                         print "Replied to a comment in {}".format(submission.title)
         comment_already_done.append(comment.id)
-        print "yay done with comment"
+        print "Yay done with comment by {}".format(str(comment.author.name))
 
 
 def main():
@@ -225,7 +227,15 @@ def main():
         except praw.errors.RateLimitExceeded as e:
             print "ERROR: Rate Limit Exceeded: {}".format(e)
             time.sleep(60)
-        except Exception as e: # In reality you don't want to just catch everything like this, but this is toy code.
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code in [502, 503, 504]:
+                # May be temporary
+                continue
+            else:
+                # Assume others are fatal
+                print "ERROR: {}".format(e)
+                print "Fatal, exiting"
+        except Exception as e:
             print "ERROR: ", e
             print "Lazily handling error, exiting"
             break
