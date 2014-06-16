@@ -24,5 +24,7 @@ Sources I used during the course of this include but are not limited to the foll
 * http://amertune.blogspot.com/2014/04/tutorial-create-reddit-bot-with-python.html
 * https://github.com/zd9/IMDb-Reddit-Bot/blob/master/bot.py
 
-TODO: Have bot delete its comments when they go below a certain karma score. Calculate Wilks not just for a total but for
+####TODO
+========
+Have bot delete its comments when they go below a certain karma score. Calculate Wilks not just for a total but for
 a single lift, too. And refactor code for less redundancy.
