@@ -46,5 +46,7 @@ coverage.xml
 docs/_build/
 
 # Custom
-# From here: https://devcenter.heroku.com/articles/getting-started-with-python
+# First from here: https://devcenter.heroku.com/articles/getting-started-with-python
 venv
+.idea
+bin/
