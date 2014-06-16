@@ -1,0 +1,1 @@
+worker: python wilks_bot_1.0.py
