@@ -27,6 +27,6 @@ Sources I used during the course of this include but are not limited to the foll
 ###TODO
 
 * [ ] Have bot delete its comments when they go below a certain karma score
-* [ ] Calculate Wilks not just for a total but for a single lift, too
-* [ ] And refactor code for less redundancy.
-* [ ] Parse lift numbers given in kilograms too
+* [ ] Calculate Wilks not just for a total but for a single lift
+* [ ] Refactor code for less redundancy
+* [ ] Parse lift numbers given in kilograms
