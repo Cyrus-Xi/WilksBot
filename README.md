@@ -3,7 +3,7 @@ WilksBot
 
 A simple Reddit bot that uses regular expressions to appropriately and flexibly parse Reddit post- and comment-embedded weightlifting statistics to reply with the Wilks coefficient adjusted statistic. 
 
-For example, if I post a comment saying "I totaled 1045 @ a BW of 140 lbs," Wilks_bot would reply with this:
+For example, if I post a comment saying "I totaled 1045 @ a BW of 140 lbs," WilksBot would reply with this:
 
 > Your total of 1045 at a BW of 140 gives you a Wilks score of 384.45. Congrats!
 [Questions/Comments/Suggestions/Likes/Dislikes?](http://www.reddit.com/message/compose/?to=Wilks_bot) Version 1.0 [(Source)](https://github.com/Suryc11/WilksBot)
