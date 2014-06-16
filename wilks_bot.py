@@ -133,14 +133,12 @@ def reply_to_submission(submission):
                         wilks = calculate_wilks(raw_data)
                         # Only total given, affects subject/verb agreement.
                         if len(wilks_data) < 5:
-                            submission.add_comment("""Your total of {} at a BW of {}
-                                gives you a Wilks score of {}. Congrats!
-                                {}""".format(
+                            submission.add_comment("""Your total of {} at a bodyweight 
+                            of {} gives you a Wilks score of {}. Congrats!{}""".format(
                                 wilks_match.group(), BW_match.group(), wilks, comment_end_string))
                         else:
-                            submission.add_comment("""Your lifts of {} at a BW of {}
-                                give you a Wilks score of {}. Congrats!
-                                {}""".format(
+                            submission.add_comment("""Your lifts of {} at a bodyweight of {}
+                                give you a Wilks score of {}. Congrats!{}""".format(
                                 wilks_match.group(), BW_match.group(), wilks, comment_end_string))
                         print "Replied to {}".format(submission.title)
         submission_already_done.append(submission.id)
@@ -177,11 +175,11 @@ def reply_to_comments(submission):
                         wilks = calculate_wilks(raw_data)
                         # Only total given, affects subject/verb agreement.
                         if len(wilks_data) < 5:
-                            comment.reply("""Your total of {} at a BW of {}
+                            comment.reply("""Your total of {} at a bodyweight of {}
                                 gives you a Wilks score of {}. Congrats! {}""".format(
                                 wilks_match.group(), BW_match.group(), wilks, comment_end_string))
                         else:
-                            comment.reply("""Your lifts of {} at a BW of {}
+                            comment.reply("""Your lifts of {} at a bodyweight of {}
                                 give you a Wilks score of {}. Congrats! {}""".format(
                                 wilks_match.group(), BW_match.group(), wilks, comment_end_string))
                         print "Replied to a comment in {}".format(submission.title)
