@@ -10,7 +10,9 @@ For example, if I post a comment saying "I totaled 1045 @ a BW of 140 lbs," Wilk
 
 > Formats: 'total 1200 @ 160', '400/300/500 at 200', 'total[ed] 1500 @ [a] BW [of] 200', '300/200/400 bw[:] 140'.
 
-A number of different formats are accepted.
+A number of different input formats are accepted.
+
+The bot is deployed using Heroku.
 
 Sources I used during the course of this include but are not limited to the following:
 * https://praw.readthedocs.org/en/v2.1.16/pages/writing_a_bot.html
