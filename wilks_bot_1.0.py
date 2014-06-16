@@ -7,6 +7,8 @@ import time
 import os  # For environment variables
 import requests  # For HTTP error-handling
 
+# --- Global variables, etc. ---
+
 submission_already_done = []  # List of submission IDs already checked
 comment_already_done = []  # Comment IDs already checked
 
@@ -107,11 +109,10 @@ def calculate_wilks(data):
 
 def reply_to_submission(submission):
     if submission.id not in submission_already_done and submission:
-        #print submission.id, submission.title
         # Get list of all authors of top-level/root comments.
         root_comment_authors = [str(comment.author.name) for comment in submission.comments if
                                 comment.author is not None and comment.is_root]
-        print root_comment_authors
+        #print root_comment_authors
         # True if this bot has made a top-level comment.
         already_replied_submission = any(USERNAME == author for author in root_comment_authors)
         #print already_replied_submission
@@ -119,9 +120,7 @@ def reply_to_submission(submission):
             # Include title, because may need to calculate Wilks there.
             print "At this submission: {}".format(submission.title)
             op_text = submission.title.lower() + ' ' + submission.selftext.lower()
-            print op_text
             # has_wilks is True if 'wilk' or 'wilks' shows up anywhere.
-            # Case-insensitive. If True, then don't need to calculate.
             has_wilks = any(word in op_text for word in wilk_words)
             if submission.id not in submission_already_done and not has_wilks:
                 wilks_match = wilks_pattern.search(op_text)
@@ -132,7 +131,7 @@ def reply_to_submission(submission):
                         wilks_data = wilks_match.group().strip()
                         raw_data = (wilks_data + ' ' + BW_match.group().strip())
                         wilks = calculate_wilks(raw_data)
-                        # Just total given, affects subject/verb agreement.
+                        # Only total given, affects subject/verb agreement.
                         if len(wilks_data) < 5:
                             submission.add_comment("""Your total of {} at a BW of {}
                                 gives you a Wilks score of {}. Congrats!
@@ -156,13 +155,9 @@ def reply_to_comments(submission):
     valid_comments = [comment for comment in flat_comments if comment.author is not None]
     valid_comments = [comment for comment in valid_comments if str(comment.author.name) != USERNAME
                       and comment.id not in comment_already_done]
-    #valid_comments = [comment for comment in valid_comments if comment.id not in comment_already_done]
-
-    print valid_comments
     #for valid_comment in valid_comments:
         #print "Valid comment: {} by {}".format(valid_comment.body, valid_comment.author)
     for comment in valid_comments:
-        #print comment.author, comment.author.name, str(comment.author), str(comment.author.name)
         # Must check that the bot hasn't already replied.
         replies_authors = [str(comment.author.name) for comment in comment.replies]
         #print replies_authors
@@ -170,23 +165,17 @@ def reply_to_comments(submission):
         #print already_replied_comment
         if not already_replied_comment:
             comment_text = comment.body.lower()
-            #print comment_text
             has_wilks = any(word in comment_text for word in wilk_words)
-            #print has_wilks
-            #print comment.score
             # Make sure comment is worth replying to.
             if comment.score > 0 and not has_wilks:
                 wilks_match = wilks_pattern.search(comment_text)
-                #print wilks_match
                 if wilks_match:  # Will be true if found pattern
                     BW_match = BW_pattern.search(comment_text)
-                    #print BW_match
                     if BW_match:
                         wilks_data = wilks_match.group().strip()
                         raw_data = (wilks_data + ' ' + BW_match.group().strip())
-                        #print raw_data
                         wilks = calculate_wilks(raw_data)
-                        # Just total given, affects subject/verb agreement.
+                        # Only total given, affects subject/verb agreement.
                         if len(wilks_data) < 5:
                             comment.reply("""Your total of {} at a BW of {}
                                 gives you a Wilks score of {}. Congrats! {}""".format(
