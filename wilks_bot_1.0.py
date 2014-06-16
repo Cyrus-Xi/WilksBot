@@ -19,7 +19,7 @@ comment_already_done = []  # Comment IDs already checked
 # If wilk/wilks is already in post/comment, then don't need Wilks calculated.
 wilk_words = ['wilk', 'wilks']
 
-### Regular expressions.
+# --- Regular expressions. ---
 # With colon and without colon cases are separate, because while
 # can handle together, can't do so without capturing the colon
 # since no repeating modifiers inside a lookbehind/lookahead.
@@ -58,16 +58,16 @@ extra_string = """
 extra_string = extra_string.replace(' ', ' ^^')
 comment_end_string = comment_string + extra_string
 
-### Login
-with open('wilks_login.txt', 'r') as infile:
-    login_lines = infile.readlines()
+# --- Login and set-up. ---
+#with open('wilks_login.txt', 'r') as infile:
+    #login_lines = infile.readlines()
 
 user_agent = ("Wilks_bot, a Wilks score calculator, 1.6 by /u/Tyrion314.")
 r = praw.Reddit(user_agent=user_agent)  # Represents session with reddit
-USERNAME = login_lines[0].strip()
-PASSWORD = login_lines[1].strip()
-#USERNAME = os.environ['REDDIT_USER']
-#PASSWORD = os.environ['REDDIT_PASS']
+#USERNAME = login_lines[0].strip()
+#PASSWORD = login_lines[1].strip()
+USERNAME = os.environ['REDDIT_USER']
+PASSWORD = os.environ['REDDIT_PASS']
 
 trying = True
 while trying:
@@ -208,9 +208,9 @@ def reply_to_comments(submission):
 
 def main():
     while True:
-        multi_reddits = r.get_subreddit('bottest')  # +powerlifting+weightroom
+        multi_reddits = r.get_subreddit('powerlifting+weightroom')
         try:
-            for submission in multi_reddits.get_new(limit=3):
+            for submission in multi_reddits.get_hot(limit=15):
                 print "Doing submission stuff."
                 reply_to_submission(submission)
                 print "Doing comment stuff."
