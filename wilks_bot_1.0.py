@@ -68,14 +68,16 @@ Formats: 'total 1200 @ 160', '400/300/500 at 200', 'total[ed] 1500 @ [a] BW [of]
 comment_end_string = comment_string + extra_string.replace(' ', ' ^^')
 
 ### Login
-#with open('wilks_login.txt', 'r') as infile:
-    #login_lines = infile.readlines()
+with open('wilks_login.txt', 'r') as infile:
+    login_lines = infile.readlines()
 
 # Add github link to user_agent description later.
 user_agent = ("Wilks_bot, a Wilks score calculator, 1.6 by /u/Tyrion314")
 r = praw.Reddit(user_agent=user_agent)  # Represents session with reddit
-USERNAME = os.environ['REDDIT_USER']
-PASSWORD = os.environ['REDDIT_PASS']
+USERNAME = login_lines[0].strip()
+PASSWORD = login_lines[1].strip()
+#USERNAME = os.environ['REDDIT_USER']
+#PASSWORD = os.environ['REDDIT_PASS']
 
 trying = True
 while trying:
@@ -217,9 +219,9 @@ def reply_to_comments(submission):
 
 def main():
     while True:
-        multi_reddits = r.get_subreddit('bottest+powerlifting+weightroom')
+        multi_reddits = r.get_subreddit('bottest')  # +powerlifting+weightroom
         try:
-            for submission in multi_reddits.get_hot(limit=10):
+            for submission in multi_reddits.get_new(limit=3):
                 print "Doing submission stuff."
                 reply_to_submission(submission)
                 print "Doing comment stuff."
