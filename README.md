@@ -1,6 +1,6 @@
 #WilksBot
 
-A simple Reddit bot that uses PRAW, a popular wrapper for Reddit's API, and regular expressions to appropriately and flexibly parse relevant post- and comment-embedded weightlifting statistics to reply with the Wilks coefficient adjusted statistic. 
+A simple Reddit bot that uses PRAW, a popular wrapper for Reddit's API, and regular expressions to flexibly parse relevant post- and comment-embedded weightlifting statistics in order to automatically reply with the Wilks coefficient adjusted statistic. 
 
 For example, if I post a comment saying 
 
